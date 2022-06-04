@@ -10,7 +10,7 @@ In un terminale Linux la sequenza di comandi è:
 
     wget https://dumps.wikimedia.org/itwiktionary/latest/itwiktionary-latest-pages-meta-current.xml.bz2
     bzip2 -f -d itwiktionary-latest-pages-meta-current.xml.bz2
-    python3 wiktionaryit2spell.py
+    python3 wiktionaryit2hyph.py
 
 ## Opzioni avanzate
 
@@ -26,8 +26,8 @@ E possibile utilizzare le opzioni a linea di comando:
 
 Per avere un rapido dizionario lemma-sillabazione su file lanciare
 
-    python3 wiktionaryit2spell.py | sort > silldiz.txt
+    python3 wiktionaryit2hyph.py | sort > silldiz.txt
 
 Per avere un elenco di pagine errate con sillabazione incongruente (ovvero dove le sillabe ricomposte non corrispondono al lemma di partenza)
   
-    python3 wiktionaryit2spell.py | sort | sed 's/-//g' | awk 'BEGIN{FS=",";OFS=","} tolower($1)!=$2 {print $1,$2,$3}'
+    python3 wiktionaryit2hyph.py | sort | sed 's/-//g' | awk 'BEGIN{FS=",";OFS=","} tolower($1)!=$2 {print $1,$2,$3}'
