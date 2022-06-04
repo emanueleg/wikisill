@@ -1,10 +1,21 @@
 import xml.etree.ElementTree as ET
 import re
+import argparse
 
 MW_NS = '{http://www.mediawiki.org/xml/export-0.10/}'
 SILL_TPL = "{{-sill-}}"
 
-tree = ET.parse('itwiktionary-latest-pages-meta-current.xml')
+parser = argparse.ArgumentParser()
+parser.add_argument('-f', '--filename', type=str, required=False)
+parser.add_argument('-a', '--accenti', required=False, action='store_true')
+parser.add_argument('-l', '--link', required=False, action='store_true')
+args = parser.parse_args()
+
+xml_wikidump_file = 'itwiktionary-latest-pages-meta-current.xml'
+if args.filename:
+    xml_wikidump_file = args.filename
+
+tree = ET.parse(xml_wikidump_file)
 root = tree.getroot()
 
 for c in root.findall(MW_NS+'page'):
@@ -103,20 +114,26 @@ for c in root.findall(MW_NS+'page'):
         continue
 
     # toglie nella sillabazione accenti tonici (tranne ultima sillaba)
-    hyph1 = hyph1.lower()										
+    hyph1 = hyph1.lower()
     last_char = hyph1[-1]
     hyph1 = hyph1[:-1]
-    hyph1 = hyph1.replace("à", "a")
-    hyph1 = hyph1.replace("á", "a")
-    hyph1 = hyph1.replace("è", "e")
-    hyph1 = hyph1.replace("é", "e")
-    hyph1 = hyph1.replace("ì", "i")
-    hyph1 = hyph1.replace("í", "i")
-    hyph1 = hyph1.replace("ò", "o")
-    hyph1 = hyph1.replace("ó", "o")
-    hyph1 = hyph1.replace("ù", "u")
-    hyph1 = hyph1.replace("ú", "u")
+    
+    if not args.accenti:
+        hyph1 = hyph1.replace("à", "a")
+        hyph1 = hyph1.replace("á", "a")
+        hyph1 = hyph1.replace("è", "e")
+        hyph1 = hyph1.replace("é", "e")
+        hyph1 = hyph1.replace("ì", "i")
+        hyph1 = hyph1.replace("í", "i")
+        hyph1 = hyph1.replace("ò", "o")
+        hyph1 = hyph1.replace("ó", "o")
+        hyph1 = hyph1.replace("ù", "u")
+        hyph1 = hyph1.replace("ú", "u")
+    
     hyph1 += last_char
 
     # stampa lemma, sillabazione e link alla pagina del wikizionario
-    print(lemma + "," + hyph1 + "," + "https://it.wiktionary.org/wiki/"+wiki_title.text)
+    if args.link:
+        print(lemma + "," + hyph1 + "," + "https://it.wiktionary.org/wiki/"+wiki_title.text)
+    else:
+        print(lemma + "," + hyph1)
