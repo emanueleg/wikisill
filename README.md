@@ -1,4 +1,4 @@
-# wikispell
+# Sillabazione dal Wikizionario
 Semplice tool in Python3 che estrae dal [Wikizionario](https://it.wiktionary.com) la sillabazione dei lemmi italiani (NB funziona offline usando il dump xml del sito).
 
 ## Funzionamento
