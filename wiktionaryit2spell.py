@@ -5,7 +5,6 @@ MW_NS = '{http://www.mediawiki.org/xml/export-0.10/}'
 SILL_TPL = "{{-sill-}}"
 
 tree = ET.parse('itwiktionary-latest-pages-meta-current.xml')
-#tree = ET.parse('itwiktionary-test.xml')
 root = tree.getroot()
 
 for c in root.findall(MW_NS+'page'):
@@ -94,9 +93,6 @@ for c in root.findall(MW_NS+'page'):
     # toglie apostrofi e asterischi
     hyph1 = hyph1.replace("'", "")
     hyph1 = hyph1.replace("*", "")
-    #hyph1 = hyph1.replace("(sostantivo)", "")
-    #hyph1 = hyph1.replace("(aggettivo)", "")
-
 
     # salta se non è rimasto testo
     if len(hyph1) < 1:
