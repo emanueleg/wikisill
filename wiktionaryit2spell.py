@@ -1,19 +1,28 @@
 import xml.etree.ElementTree as ET
 import re
 import argparse
+import sqlite3
 
 MW_NS = '{http://www.mediawiki.org/xml/export-0.10/}'
 SILL_TPL = "{{-sill-}}"
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-f', '--filename', type=str, required=False)
+parser.add_argument('-f', '--filename', type=str, required=False, default='itwiktionary-latest-pages-meta-current.xml')
 parser.add_argument('-a', '--accenti', required=False, action='store_true')
 parser.add_argument('-l', '--link', required=False, action='store_true')
+parser.add_argument('-s', '--sql', required=False, action='store_true')
+parser.add_argument('-d', '--db', type=str, required=False, default='wiki.sqlite3')
+parser.add_argument('-t', '--table', type=str, required=False, default='itwiktionary')
 args = parser.parse_args()
 
-xml_wikidump_file = 'itwiktionary-latest-pages-meta-current.xml'
-if args.filename:
-    xml_wikidump_file = args.filename
+xml_wikidump_file = args.filename
+
+if args.sql:
+    con = sqlite3.connect(args.db)
+    cur = con.cursor()
+    cur.execute("DROP TABLE IF EXISTS " + args.table +  ";")
+    cur.execute('CREATE TABLE "' + args.table +  '" ("lemma" TEXT NOT NULL, "link" TEXT, "sillabazione" TEXT )')
+
 
 tree = ET.parse(xml_wikidump_file)
 root = tree.getroot()
@@ -131,9 +140,22 @@ for c in root.findall(MW_NS+'page'):
         hyph1 = hyph1.replace("ú", "u")
     
     hyph1 += last_char
+    
+    wiki_link = "https://it.wiktionary.org/wiki/"+wiki_title.text
 
-    # stampa lemma, sillabazione e link alla pagina del wikizionario
-    if args.link:
-        print(lemma + "," + hyph1 + "," + "https://it.wiktionary.org/wiki/"+wiki_title.text)
+    # inserisce nel db sqlite3 oppure stampa lemma, sillabazione e link alla pagina del wikizionario
+    if args.sql:
+        cur.execute("INSERT INTO " + args.table + " (`lemma`, `link`, `sillabazione`) VALUES (?, ?, ?)", (lemma, wiki_link, hyph1))
     else:
-        print(lemma + "," + hyph1)
+        if args.link:
+            print(lemma + "," + hyph1 + "," + wiki_link)
+        else:
+            print(lemma + "," + hyph1)
+
+
+if args.sql:
+    con.commit()
+    cur.execute("VACUUM `main`"); 
+    con.commit()
+    cur.close()
+    con.close()
