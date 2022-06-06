@@ -15,7 +15,7 @@ In un terminale Linux la sequenza di comandi è:
 ## Opzioni avanzate
 
 E possibile utilizzare le opzioni a linea di comando:
-* `-f NOMEFILEDUMP` per indicare un diverso file xml (default `itwiktionary-latest-pages-meta-current.xml.bz2`)
+* `-f NOMEFILEDUMP` per indicare un diverso file xml (default `itwiktionary-latest-pages-meta-current.xml`)
 * `-a` per mostrare gli accenti tonici nella sillabazione
 * `-l` per mostrare in output il link alla pagina del lemma nel wikizionario
 * `-s` per inserire i risultati su db sqlite3 invece che stamparli a schermo
